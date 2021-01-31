@@ -382,6 +382,9 @@
         <member name="T:TehPers.Core.Api.Content.IAssetProvider">
             <summary>
             A provider for game assets.
+            You may use <see cref="T:TehPers.Core.Api.DependencyInjection.ContentSourceAttribute"/> to specify which content source you want to use.<br />
+            <br />
+            For custom content sources, it is recommended that you create a class that extends <see cref="T:Ninject.ConstraintAttribute"/> to identify which one you want to inject into your service.
             </summary>
         </member>
         <member name="M:TehPers.Core.Api.Content.IAssetProvider.Load``1(System.String)">
@@ -401,9 +404,60 @@
             <param name="mode">The mode to open the file in.</param>
             <returns>The file's stream.</returns>
         </member>
+        <member name="T:TehPers.Core.Api.DependencyInjection.BaseModule">
+            <summary>
+            Base class for modules that automatically tracks bindings.
+            </summary>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.BaseModule.Bindings">
+            <summary>
+            Gets all the bindings registered by this module.
+            </summary>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.BaseModule.Kernel">
+            <inheritdoc/>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.BaseModule.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.BaseModule.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TehPers.Core.Api.DependencyInjection.BaseModule"/> class.
+            </summary>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.BaseModule.AddBinding(Ninject.Planning.Bindings.IBinding)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.BaseModule.RemoveBinding(Ninject.Planning.Bindings.IBinding)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.BaseModule.OnLoad(Ninject.IKernel)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.BaseModule.OnUnload(Ninject.IKernel)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.BaseModule.OnVerifyRequiredModules">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.BaseModule.Load">
+            <summary>
+            Loads the module into the kernel.
+            </summary>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.BaseModule.Unload">
+            <summary>
+            Unloads the module from the kernel.
+            </summary>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.BaseModule.VerifyRequiredModulesAreLoaded">
+            <summary>
+            Called after loading the modules. A module can verify here if all other required modules are loaded.
+            </summary>
+        </member>
         <member name="T:TehPers.Core.Api.DependencyInjection.ContentSourceAttribute">
             <summary>
-            Constrains a <see cref="T:TehPers.Core.Api.Content.IAssetProvider"/> so that a particular source is injected.
+            Constrains the source for an injected <see cref="T:TehPers.Core.Api.Content.IAssetProvider"/>.
             </summary>
         </member>
         <member name="P:TehPers.Core.Api.DependencyInjection.ContentSourceAttribute.Source">
@@ -435,6 +489,31 @@
         <member name="M:TehPers.Core.Api.DependencyInjection.DataStore`1.Replace(System.Func{`0,`0})">
             <inheritdoc />
         </member>
+        <member name="T:TehPers.Core.Api.DependencyInjection.GlobalAttribute">
+            <summary>
+            Forces a <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/> to inherit a service's implementation from the global <see cref="T:Ninject.IKernel"/>.
+            </summary>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.GlobalAttribute.Matches(Ninject.Planning.Bindings.IBindingMetadata)">
+            <inheritdoc />
+        </member>
+        <member name="T:TehPers.Core.Api.DependencyInjection.GlobalParameter">
+            <summary>
+            Forces an <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/> to rely on the global <see cref="T:Ninject.IKernel"/> to resolve a service.
+            </summary>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.GlobalParameter.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.GlobalParameter.ShouldInherit">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.GlobalParameter.Equals(Ninject.Parameters.IParameter)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.GlobalParameter.GetValue(Ninject.Activation.IContext,Ninject.Planning.Targets.ITarget)">
+            <inheritdoc/>
+        </member>
         <member name="T:TehPers.Core.Api.DependencyInjection.IDataStore`1">
             <summary>
             A thread-safe store that allows for stateful services.
@@ -447,6 +526,7 @@
             </summary>
             <param name="callback">Callback that processes or modifies the data in this store and returns some value from it.</param>
             <typeparam name="TReturn">The type of value to return.</typeparam>
+            <returns>The value returned from the callback.</returns>
         </member>
         <member name="M:TehPers.Core.Api.DependencyInjection.IDataStore`1.Replace(System.Func{`0,`0})">
             <summary>
@@ -454,22 +534,71 @@
             </summary>
             <param name="callback">Callback that processes or modifies the data in this store, then returns a new value to store.</param>
         </member>
-        <member name="T:TehPers.Core.Api.DependencyInjection.IModKernel">
-            <summary><see cref="T:Ninject.IKernel"/> specific to an <see cref="T:StardewModdingAPI.IMod"/>.</summary>
-        </member>
-        <member name="P:TehPers.Core.Api.DependencyInjection.IModKernel.ParentMod">
+        <member name="T:TehPers.Core.Api.DependencyInjection.IGlobalKernel">
             <summary>
-            Gets the mod which owns this <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/>.
+            A factory capable of creating any type of object based on bindings.
+            It is the parent of every mod's kernel, however it doesn't automatically know about any bindings in them.
+            </summary>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.IGlobalKernel.Proxy(Ninject.Planning.Bindings.IBinding,Ninject.IKernel)">
+            <summary>
+            Adds a proxied binding to the kernel. The binding will be resolved by making a request to the binding's original parent.
+            </summary>
+            <param name="binding">The binding to proxy.</param>
+            <param name="parent">The binding's parent kernel.</param>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.IGlobalKernel.Unproxy(Ninject.Planning.Bindings.IBinding)">
+            <summary>
+            Removes a proxied binding from the kernel.
+            </summary>
+            <param name="binding">The binding to remove the proxy for.</param>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.IGlobalKernel.Unproxy(System.Type,Ninject.IKernel)">
+            <summary>
+            Removes all proxied bindings for a particular service from the kernel.
+            </summary>
+            <param name="service">The type of service to remove proxies for.</param>
+            <param name="parent">The parent kernel for those proxies.</param>
+        </member>
+        <member name="T:TehPers.Core.Api.DependencyInjection.IHaveModKernel">
+            <summary>
+            Indicates that an object has a reference to an <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/>.
+            </summary>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.IHaveModKernel.Kernel">
+            <summary>
+            Gets the kernel.
+            </summary>
+        </member>
+        <member name="T:TehPers.Core.Api.DependencyInjection.IModBindingRoot">
+            <summary>
+            Provides a path for mods to register bindings.
+            </summary>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.IModBindingRoot.ParentMod">
+            <summary>
+            Gets the mod which owns this <see cref="T:TehPers.Core.Api.DependencyInjection.IModBindingRoot"/>.
+            </summary>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.IModBindingRoot.ParentFactory">
+            <summary>
+            Gets the <see cref="T:TehPers.Core.Api.IModKernelFactory"/> that created this <see cref="T:TehPers.Core.Api.DependencyInjection.IModBindingRoot"/>.
+            </summary>
+        </member>
+        <member name="T:TehPers.Core.Api.DependencyInjection.IModKernel">
+            <summary>
+            A factory capable of creating any type of object based on bindings.
+            It is a child of the global kernel, so any missing bindings will be resolved by the global kernel.
             </summary>
         </member>
         <member name="P:TehPers.Core.Api.DependencyInjection.IModKernel.GlobalKernel">
             <summary>
-            Gets the global <see cref="T:Ninject.IKernel"/>, which is the parent of this <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/>. Dependencies registered in the global <see cref="T:Ninject.IKernel"/> are visible to all mods.
+            Gets the global kernel. Services without bindings in this <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/> are resolved by the global kernel.
             </summary>
         </member>
-        <member name="P:TehPers.Core.Api.DependencyInjection.IModKernel.ParentFactory">
+        <member name="T:TehPers.Core.Api.DependencyInjection.IModModule">
             <summary>
-            Gets the <see cref="T:TehPers.Core.Api.IModKernelFactory"/> that created this <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/>.
+            A loadable unit that defines bindings for your mod.
             </summary>
         </member>
         <member name="T:TehPers.Core.Api.DependencyInjection.IOptional`1">
@@ -487,6 +616,17 @@
             <summary>Tries to get the value from this <see cref="T:TehPers.Core.Api.DependencyInjection.IOptional`1"/>.</summary>
             <param name="value">The value if it exists.</param>
             <returns><see langword="true"/> if the value exists, <see langword="false"/> otherwise.</returns>
+        </member>
+        <member name="T:TehPers.Core.Api.DependencyInjection.IProxyBindable">
+            <summary>
+            Indicates that an object has a proxy root for exposing services.
+            </summary>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.IProxyBindable.GlobalProxyRoot">
+            <summary>
+            Gets an <see cref="T:Ninject.Syntax.IBindingRoot"/> which automatically creates proxy bindings in the global kernel when bindings are created.
+            Dependencies registered in it are visible to all mods, however they are resolved by your <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/>.
+            </summary>
         </member>
         <member name="T:TehPers.Core.Api.DependencyInjection.ISimpleFactory`1">
             <summary>
@@ -510,10 +650,9 @@
             <summary>
             A handler for lifecycle events (such as UpdateTicked or SaveLoaded), or for custom events created by other mods.<br />
             <br />
-            It is recommended that you implement this interface explicitly for two reasons:<br />
-            1) The event handler is most likely used by a separate service that doesn't care about your specific type, but instead only cares that it implements <see cref="T:TehPers.Core.Api.DependencyInjection.Lifecycle.IEventHandler`1"/>. Because of that, it is unlikely you want the event handler to be visible as part of your type's public API.<br />
-            2) It is possible for a service to handle multiple events. Since the implementations would conflict, you would need to implement some of the handlers explicitly anyway.<br />
-            You don't need to implement <see cref="T:TehPers.Core.Api.DependencyInjection.Lifecycle.IEventHandler`1"/> explicitly for it to handle events. However, keep point #1 in mind if you choose to implement the interface implicitly instead.
+            It is recommended that you implement this interface explicitly rather than implicitly.
+            The event handler is most likely used by a separate service that doesn't care about your specific type, but instead only cares that it implements
+            <see cref="T:TehPers.Core.Api.DependencyInjection.Lifecycle.IEventHandler`1"/>. Because of that, it is unlikely you want the event handler to be visible as part of your type's public API.
             </summary>
             <typeparam name="TEventArgs">The type of arguments the event propagates.</typeparam>
         </member>
@@ -538,6 +677,33 @@
         </member>
         <member name="M:TehPers.Core.Api.DependencyInjection.Lifecycle.SimpleEventHandler`1.HandleEvent(System.Object,`0)">
             <inheritdoc />
+        </member>
+        <member name="T:TehPers.Core.Api.DependencyInjection.ModModule">
+            <inheritdoc cref="T:TehPers.Core.Api.DependencyInjection.IModModule"/>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.ModModule.GlobalProxyRoot">
+            <inheritdoc />
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.ModModule.Kernel">
+            <inheritdoc/>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.ModModule.KernelInstance">
+            <inheritdoc/>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.ModModule.ParentFactory">
+            <inheritdoc/>
+        </member>
+        <member name="P:TehPers.Core.Api.DependencyInjection.ModModule.ParentMod">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.ModModule.Unbind(System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.ModModule.OnLoad(Ninject.IKernel)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TehPers.Core.Api.DependencyInjection.ModModule.OnUnload(Ninject.IKernel)">
+            <inheritdoc/>
         </member>
         <member name="P:TehPers.Core.Api.Drawing.IDrawingApi.WhitePixel">
             <summary>
@@ -1087,72 +1253,55 @@
             <param name="context">The parent context.</param>
             <returns>The inherited parameters.</returns>
         </member>
-        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.BindForeignModApi``1(TehPers.Core.Api.DependencyInjection.IModKernel,System.String)">
+        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.BindForeignModApi``1(TehPers.Core.Api.DependencyInjection.IModBindingRoot,System.String)">
             <summary>
             Binds an API exposed by another mod to your mod's kernel.
             </summary>
             <typeparam name="TApi">The type the mod's API returns, or an interface which matches part of (or all of) its signature.</typeparam>
-            <param name="modKernel">The mod's kernel.</param>
+            <param name="root">The mod's binding root.</param>
             <param name="modId">The foreign mod's API.</param>
             <returns>The syntax that can be used to configure the binding.</returns>
         </member>
-        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.BindEventHandler``1(TehPers.Core.Api.DependencyInjection.IModKernel)">
-            <summary>
-            Binds an event handler.
-            </summary>
-            <typeparam name="TEventArgs">The type of arguments for the event.</typeparam>
-            <param name="kernel">The mod's kernel.</param>
-            <returns>The syntax that can be used to configure the binding.</returns>
-        </member>
-        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.BindSimpleEventHandler``1(TehPers.Core.Api.DependencyInjection.IModKernel,System.EventHandler{``0})">
+        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.BindSimpleEventHandler``1(TehPers.Core.Api.DependencyInjection.IModBindingRoot,System.EventHandler{``0})">
             <summary>
             Binds a simple event handler. This is the easiest way to create an event handler, however they cannot have dependencies injected via DI.
             </summary>
-            <param name="kernel">The mod's kernel.</param>
+            <param name="root">The mod's binding root.</param>
             <param name="handler">The event handler.</param>
             <typeparam name="TEventArgs">The type of arguments for the event.</typeparam>
             <returns>The syntax that can be used to configure the binding.</returns>
         </member>
-        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.AddEventHandler``1(TehPers.Core.Api.DependencyInjection.IModKernel)">
+        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.AddEventHandler``1(TehPers.Core.Api.DependencyInjection.IProxyBindable)">
             <summary>
             Registers a service as a handler for all the events it can handle. This does not bind the service.
             </summary>
             <typeparam name="TService">The type of service being bound as an event handler. This service should be registered to your mod's kernel separately.</typeparam>
-            <param name="kernel">The mod's kernel.</param>
-            <returns>The mod kernel for chaining.</returns>
+            <param name="root">The binding root.</param>
         </member>
-        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.AddEventHandler``2(TehPers.Core.Api.DependencyInjection.IModKernel)">
+        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.BindProxy``2(Ninject.Syntax.IBindingRoot)">
+            <summary>
+            Binds a service as a proxy for another service, essentially giving it another name.
+            Whenever an instance of <typeparamref name="TProxy"/> is requested, an instance of <typeparamref name="TService"/> is provided instead.
+            </summary>
+            <param name="root">The binding root.</param>
+            <typeparam name="TProxy">The proxy service.</typeparam>
+            <typeparam name="TService">The provided service.</typeparam>
+            <returns>The syntax that can be used to configure the binding.</returns>
+        </member>
+        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.AddEventHandler``2(TehPers.Core.Api.DependencyInjection.IProxyBindable)">
             <summary>
             Binds a service as a handler for a particular type of event.
             </summary>
-            <param name="kernel">The mod's kernel.</param>
+            <param name="root">The mod's kernel.</param>
             <typeparam name="TService">The type of service being bound as an event handler. This service should be injectible by your mod's kernel.</typeparam>
             <typeparam name="TEventArgs">The type of arguments propagated by the event this service handles.</typeparam>
-            <returns>The mod kernel for chaining.</returns>
         </member>
-        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.ExposeService``1(TehPers.Core.Api.DependencyInjection.IModKernel)">
-            <summary>
-            Exposes a service in a mod's kernel to the global kernel.
-            </summary>
-            <param name="kernel">The mod's kernel.</param>
-            <typeparam name="TService">The service being exposed globally.</typeparam>
-            <returns>The syntax that can be used to configure the service that was exposed.</returns>
-        </member>
-        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.ExposeService``2(TehPers.Core.Api.DependencyInjection.IModKernel)">
-            <summary>
-            Exposes a service in a mod's kernel to the global kernel.
-            </summary>
-            <param name="kernel">The mod's kernel.</param>
-            <typeparam name="TGlobalService">The type of service that is visible globally and will be injected by the global kernel. Generally, this would be your type's interface or base class.</typeparam>
-            <typeparam name="TModService">The type of service that is visible within your mod. This is generally the concrete type of your service, although it could be a base class or interface as well.</typeparam>
-            <returns>The syntax that can be used to configure the service that was exposed.</returns>
-        </member>
-        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.BindConfiguration``1(TehPers.Core.Api.DependencyInjection.IModKernel,System.String,StardewModdingAPI.ContentSource,System.Boolean)">
+        <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.BindConfiguration``1(TehPers.Core.Api.DependencyInjection.IModBindingRoot,System.String,StardewModdingAPI.ContentSource,System.Boolean)">
             <summary>
             Binds a configuration that is loaded from a file.
             </summary>
             <typeparam name="T">The type of configuration to bind. The file's contents are deserialized into this type.</typeparam>
-            <param name="kernel">The mod's kernel.</param>
+            <param name="root">The mod's binding root.</param>
             <param name="path">The path to the configuration file.</param>
             <param name="source">The source folder for that configuration file.</param>
             <param name="saveOnChange">Whether the configuration should be saved when its value changes.</param>
@@ -1160,7 +1309,7 @@
         </member>
         <member name="M:TehPers.Core.Api.Extensions.BindingExtensions.LoadIntoModKernels``1(TehPers.Core.Api.IModKernelFactory)">
             <summary>
-            Loads modules into every <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/>.
+            Loads modules into every <see cref="T:TehPers.Core.Api.DependencyInjection.IModBindingRoot"/>.
             </summary>
             <typeparam name="TModule">The type of module to load.</typeparam>
             <param name="kernelFactory">The mod kernel factory.</param>
@@ -1220,11 +1369,21 @@
         </member>
         <member name="M:TehPers.Core.Api.Extensions.EnumerableExtensions.ToDictionary``2(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{``0,``1}},System.Collections.Generic.IEqualityComparer{``0})">
             <summary>Converts an <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:System.Collections.Generic.KeyValuePair`2"/> to a <see cref="T:System.Collections.Generic.Dictionary`2"/> using a custom <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>.</summary>
-            <typeparam name="TKey">The type of the keys in the <paramref name="source" />.</typeparam>
+            <typeparam name="TKey">The type of the keys in the <paramref name="source"/>.</typeparam>
             <typeparam name="TValue">The type of the values in the <paramref name="source"/>.</typeparam>
             <param name="source">The source <see cref="T:System.Collections.Generic.IEnumerable`1"/>.</param>
             <param name="comparer">The comparer used to compare keys in the dictionary.</param>
             <returns>A dictionary containing all the <see cref="T:System.Collections.Generic.KeyValuePair`2"/> entries in the <paramref name="source"/>.</returns>
+        </member>
+        <member name="M:TehPers.Core.Api.Extensions.EnumerableExtensions.TryGetValue``2(System.Collections.Generic.IReadOnlyDictionary{``0,``1},``0)">
+            <summary>
+            Tries to get the value associated with a key in a dictionary, then returns a pair of values depending on the result.
+            </summary>
+            <param name="source">The dictionary to get the item from.</param>
+            <param name="key">The key to lookup in the dictionary.</param>
+            <typeparam name="TKey">The type of the keys in the <paramref name="source"/>.</typeparam>
+            <typeparam name="TValue">The type of the values in the <paramref name="source"/>.</typeparam>
+            <returns>If the key was found, then <c>(<see langword="true"/>, value)</c>. Otherwise, <c>(<see langword="false"/>, ?)</c>.</returns>
         </member>
         <member name="M:TehPers.Core.Api.Extensions.EnumerableExtensions.Swap``1(System.Collections.Generic.IList{``0},System.Int32,System.Int32)">
             <summary>Swaps two elements in a list.</summary>
@@ -1296,6 +1455,32 @@
             <param name="flags">The flags to check for.</param>
             <returns><see langword="true"/> if the flags are present, <see langword="false"/> otherwise.</returns>
         </member>
+        <member name="T:TehPers.Core.Api.Extensions.JsonProviderExtensions">
+            <summary>
+            Extensions for <see cref="T:TehPers.Core.Api.Json.IJsonProvider"/>.
+            </summary>
+        </member>
+        <member name="M:TehPers.Core.Api.Extensions.JsonProviderExtensions.Serialize``1(TehPers.Core.Api.Json.IJsonProvider,``0,System.Action{Newtonsoft.Json.JsonSerializerSettings},System.Boolean)">
+            <summary>
+            Serializes data to JSON.
+            </summary>
+            <typeparam name="TModel">The type of object being written.</typeparam>
+            <param name="json">The JSON provider.</param>
+            <param name="data">The object being written.</param>
+            <param name="settings">Callback for configuring the <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/>.</param>
+            <param name="minify">Whether to minify the output. Minifying the output removes all comments and extra whitespace.</param>
+            <returns>The serialized data.</returns>
+        </member>
+        <member name="M:TehPers.Core.Api.Extensions.JsonProviderExtensions.Deserialize``1(TehPers.Core.Api.Json.IJsonProvider,System.String,System.Action{Newtonsoft.Json.JsonSerializerSettings})">
+            <summary>
+            Deserializes JSON text.
+            </summary>
+            <typeparam name="TModel">The type of object being read.</typeparam>
+            <param name="json">The JSON provider.</param>
+            <param name="text">The text to read from.</param>
+            <param name="settings">Callback for configuring the <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/>.</param>
+            <returns>The deserialized model.</returns>
+        </member>
         <member name="T:TehPers.Core.Api.Extensions.LoggingExtensions">
             <summary>
             Extension methods for logging purposes.
@@ -1318,7 +1503,8 @@
         <member name="M:TehPers.Core.Api.Extensions.ModExtensions.Register(StardewModdingAPI.IMod,System.Action{TehPers.Core.Api.DependencyInjection.IModKernel},System.Action{TehPers.Core.Api.DependencyInjection.IModKernel})">
             <summary>
             Asynchronously register services and initializes the mod.
-            The services will be registered once all <see cref="M:StardewModdingAPI.Mod.Entry(StardewModdingAPI.IModHelper)"/> methods have been executed, and the mod will be initailized after all mods have registered their services.
+            The services will be registered once all <see cref="M:StardewModdingAPI.Mod.Entry(StardewModdingAPI.IModHelper)"/> methods have been executed, and the mod will be initialized after all mods have registered their services.
+            This must be called in your mod's <see cref="M:StardewModdingAPI.IMod.Entry(StardewModdingAPI.IModHelper)"/> method or it won't do anything.
             </summary>
             <param name="mod">The <see cref="T:StardewModdingAPI.IMod"/>.</param>
             <param name="registerServices">The callback which registers services to the <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/> for this <see cref="T:StardewModdingAPI.IMod"/>.</param>
@@ -1326,7 +1512,9 @@
         </member>
         <member name="M:TehPers.Core.Api.Extensions.ModExtensions.Register(TehPers.Core.Api.IServiceDrivenMod)">
             <summary>
-            Asynchronously registers services for this <see cref="T:TehPers.Core.Api.IServiceDrivenMod"/> and initializes it. Services will be registered early during game initialization, and the mod will be initialized after all mods have had a chance to register services.
+            Asynchronously registers services for this <see cref="T:TehPers.Core.Api.IServiceDrivenMod"/> and initializes it.
+            Services will be registered early during game initialization, and the mod will be initialized after all mods have had a chance to register services.
+            This must be called in your mod's <see cref="M:StardewModdingAPI.IMod.Entry(StardewModdingAPI.IModHelper)"/> method or it won't do anything.
             </summary>
             <param name="mod">The <see cref="T:TehPers.Core.Api.IServiceDrivenMod"/>.</param>
         </member>
@@ -1501,6 +1689,44 @@
             Provides all items that can be provided. This type is merely for convenience. Item providers should be registered through your mod's <see cref="T:TehPers.Core.Api.DependencyInjection.IModKernel"/>.
             </summary>
         </member>
+        <member name="T:TehPers.Core.Api.Items.IIndexRegistry">
+            <summary>
+            A registry for reserving indexes for IDs.
+            </summary>
+        </member>
+        <member name="M:TehPers.Core.Api.Items.IIndexRegistry.Reserve(TehPers.Core.Api.NamespacedId)">
+            <summary>
+            Reserves a random index for the given ID.
+            </summary>
+            <param name="id">The ID to reserve an index for.</param>
+            <returns>The index reservation.</returns>
+        </member>
+        <member name="M:TehPers.Core.Api.Items.IIndexRegistry.Reserve(TehPers.Core.Api.NamespacedId,System.Int32)">
+            <summary>
+            Reserves a specific index for the given ID.
+            </summary>
+            <param name="id">The ID to reserve an index for.</param>
+            <param name="index">The index to reserve.</param>
+            <returns>The index reservation.</returns>
+        </member>
+        <member name="M:TehPers.Core.Api.Items.IIndexRegistry.GetAll">
+            <summary>
+            Gets all assigned indexes.
+            </summary>
+            <returns>A mapping of each reserved index.</returns>
+        </member>
+        <member name="T:TehPers.Core.Api.Items.IIndexReservation">
+            <summary>
+            A reservation for an index.
+            </summary>
+        </member>
+        <member name="M:TehPers.Core.Api.Items.IIndexReservation.TryGetIndex(System.Int32@)">
+            <summary>
+            Tries to get the assigned index. If no index has been assigned yet (i.e. in the title screen), then this method returns <see langword="false"/>.
+            </summary>
+            <param name="index">The assigned item index.</param>
+            <returns><see langword="true"/> if an index has been assigned, or <see langword="false"/> otherwise.</returns>
+        </member>
         <member name="T:TehPers.Core.Api.Items.IItemProvider">
             <summary>
             Provider for a set of items.
@@ -1514,7 +1740,7 @@
         </member>
         <member name="M:TehPers.Core.Api.Items.IItemProvider.IsInstanceOf(TehPers.Core.Api.NamespacedId,StardewValley.Item)">
             <summary>
-            Checks if an item is an instance of a particular key, but cannot guarantee that an item is not an instance of that key. To perform a more exhaustive check, use <see cref="T:TehPers.Core.Api.Items.IGlobalItemProvider"/> or enumerate each <see cref="T:TehPers.Core.Api.Items.IItemProvider"/> yourself.
+            Checks if an item is an instance of a particular key, but cannot guarantee that an item is not an instance of that key. To perform a more exhaustive check, use <see cref="T:TehPers.Core.Api.Items.IGlobalItemProvider"/>.
             </summary>
             <param name="id">The key of the item.</param>
             <param name="item">The item to compare against the key.</param>
@@ -1549,7 +1775,7 @@
             Writes a JSON file to a specified path.
             </summary>
             <typeparam name="TModel">The type of object being written.</typeparam>
-            <param name="model">The object being written.</param>
+            <param name="data">The object being written.</param>
             <param name="path">The path to the output file.</param>
             <param name="assetProvider">The <see cref="T:TehPers.Core.Api.Content.IAssetProvider"/> to write the file to.</param>
             <param name="minify">Whether to minify the output. Minifying the output removes all comments and extra whitespace.</param>
@@ -1559,7 +1785,7 @@
             Writes a JSON file to a specified path.
             </summary>
             <typeparam name="TModel">The type of object being written.</typeparam>
-            <param name="model">The object being written.</param>
+            <param name="data">The object being written.</param>
             <param name="path">The path to the output file.</param>
             <param name="assetProvider">The <see cref="T:TehPers.Core.Api.Content.IAssetProvider"/> to write the file to.</param>
             <param name="settings">Callback for configuring the <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/>.</param>
@@ -1570,7 +1796,7 @@
             Serializes JSON to a <see cref="T:System.IO.Stream"/>.
             </summary>
             <typeparam name="TModel">The type of object being written.</typeparam>
-            <param name="model">The object being written.</param>
+            <param name="data">The object being written.</param>
             <param name="outputStream">The <see cref="T:System.IO.StreamWriter"/> to write to.</param>
             <param name="minify">Whether to minify the output. Minifying the output removes all comments and extra whitespace.</param>
         </member>
@@ -1579,12 +1805,12 @@
             Serializes JSON to a <see cref="T:System.IO.Stream"/>.
             </summary>
             <typeparam name="TModel">The type of object being written.</typeparam>
-            <param name="model">The object being written.</param>
+            <param name="data">The object being written.</param>
             <param name="outputStream">The <see cref="T:System.IO.StreamWriter"/> to write to.</param>
             <param name="settings">Callback for configuring the <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/>.</param>
             <param name="minify">Whether to minify the output. Minifying the output removes all comments and extra whitespace.</param>
         </member>
-        <member name="M:TehPers.Core.Api.Json.IJsonProvider.Deserialze``1(System.IO.StreamReader)">
+        <member name="M:TehPers.Core.Api.Json.IJsonProvider.Deserialize``1(System.IO.StreamReader)">
             <summary>
             Deserializes JSON from a <see cref="T:System.IO.Stream"/>.
             </summary>
@@ -1592,7 +1818,7 @@
             <param name="inputStream">The <see cref="T:System.IO.StreamReader"/> to read from.</param>
             <returns>The deserialized model.</returns>
         </member>
-        <member name="M:TehPers.Core.Api.Json.IJsonProvider.Deserialze``1(System.IO.StreamReader,System.Action{Newtonsoft.Json.JsonSerializerSettings})">
+        <member name="M:TehPers.Core.Api.Json.IJsonProvider.Deserialize``1(System.IO.StreamReader,System.Action{Newtonsoft.Json.JsonSerializerSettings})">
             <summary>
             Deserializes JSON from a <see cref="T:System.IO.Stream"/>.
             </summary>
@@ -1645,7 +1871,7 @@
             </summary>
             <typeparam name="TModel">The type of object being read.</typeparam>
             <param name="path">The path to the file.</param>
-            <param name="modelFactory">Factory method which creates an instance of model.</param>
+            <param name="dataFactory">Factory method which creates the data to write.</param>
             <param name="minify">Whether to minify the output if the file is created. Minifying the output removes all comments and extra whitespace.</param>
             <returns>The deserialized model.</returns>
         </member>
@@ -1657,7 +1883,7 @@
             <param name="path">The path to the file.</param>
             <param name="assetProvider">The <see cref="T:TehPers.Core.Api.Content.IAssetProvider"/> to read the file from.</param>
             <param name="settings">Callback for configuring the <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/>.</param>
-            <param name="modelFactory">Factory method which creates an instance of model.</param>
+            <param name="dataFactory">Factory method which creates the data to write.</param>
             <param name="minify">Whether to minify the output if the file is created. Minifying the output removes all comments and extra whitespace.</param>
             <returns>The deserialized model.</returns>
         </member>
@@ -1753,7 +1979,7 @@
             <returns>A new <see cref="T:TehPers.Core.Api.Multiplayer.EventChannel`1"/> with the given ID.</returns>
         </member>
         <member name="T:TehPers.Core.Api.NamespacedId">
-            <summary>An identifier consisting of a namespace and another identifier.</summary>
+            <summary>An identifier consisting of a namespace and another identifier unique to that namespace.</summary>
         </member>
         <member name="F:TehPers.Core.Api.NamespacedId.VanillaObjectsNamespace">
             <summary>
@@ -1763,6 +1989,16 @@
         <member name="F:TehPers.Core.Api.NamespacedId.VanillaSwordsNamespace">
             <summary>
             The namespace for vanilla <see cref="T:StardewValley.Tools.Sword"/>s.
+            </summary>
+        </member>
+        <member name="F:TehPers.Core.Api.NamespacedId.VanillaBootsNamespace">
+            <summary>
+            The namespace for vanilla <see cref="T:StardewValley.Objects.Boots"/>.
+            </summary>
+        </member>
+        <member name="F:TehPers.Core.Api.NamespacedId.VanillaRingsNamespace">
+            <summary>
+            The namespace for vanilla <see cref="T:StardewValley.Objects.Ring"/>s.
             </summary>
         </member>
         <member name="M:TehPers.Core.Api.NamespacedId.TryParse(System.String,TehPers.Core.Api.NamespacedId@)">
@@ -1792,6 +2028,20 @@
             Constructs a new <see cref="T:TehPers.Core.Api.NamespacedId"/> from a vanilla <see cref="T:StardewValley.Tools.Sword"/>'s <see cref="P:StardewValley.Tool.InitialParentTileIndex"/>.
             </summary>
             <param name="initialParentTileIndex">The <see cref="P:StardewValley.Tool.InitialParentTileIndex"/> of the item.</param>
+            <returns>A new <see cref="T:TehPers.Core.Api.NamespacedId"/> identifying that item.</returns>
+        </member>
+        <member name="M:TehPers.Core.Api.NamespacedId.FromBootsIndex(System.Int32)">
+            <summary>
+            Constructs a new <see cref="T:TehPers.Core.Api.NamespacedId"/> from a vanilla <see cref="T:StardewValley.Objects.Boots"/>' <see cref="F:StardewValley.Objects.Boots.indexInTileSheet"/>.
+            </summary>
+            <param name="indexInTileSheet">The <see cref="F:StardewValley.Objects.Boots.indexInTileSheet"/> of the item.</param>
+            <returns>A new <see cref="T:TehPers.Core.Api.NamespacedId"/> identifying that item.</returns>
+        </member>
+        <member name="M:TehPers.Core.Api.NamespacedId.FromRingIndex(System.Int32)">
+            <summary>
+            Constructs a new <see cref="T:TehPers.Core.Api.NamespacedId"/> from a vanilla <see cref="T:StardewValley.Objects.Ring"/>'s <see cref="F:StardewValley.Objects.Ring.indexInTileSheet"/>.
+            </summary>
+            <param name="indexInTileSheet">The <see cref="F:StardewValley.Objects.Ring.indexInTileSheet"/> of the item.</param>
             <returns>A new <see cref="T:TehPers.Core.Api.NamespacedId"/> identifying that item.</returns>
         </member>
         <member name="M:TehPers.Core.Api.NamespacedId.op_Equality(TehPers.Core.Api.NamespacedId,TehPers.Core.Api.NamespacedId)">

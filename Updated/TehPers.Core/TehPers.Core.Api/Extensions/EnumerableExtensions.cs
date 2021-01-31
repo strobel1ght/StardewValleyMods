@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TehPers.Core.Api.Extensions
@@ -70,7 +71,7 @@ namespace TehPers.Core.Api.Extensions
         }
 
         /// <summary>Converts an <see cref="IEnumerable{T}"/> of <see cref="KeyValuePair{TKey,TValue}"/> to a <see cref="Dictionary{TKey,TValue}"/> using a custom <see cref="IEqualityComparer{T}"/>.</summary>
-        /// <typeparam name="TKey">The type of the keys in the <paramref name="source" />.</typeparam>
+        /// <typeparam name="TKey">The type of the keys in the <paramref name="source"/>.</typeparam>
         /// <typeparam name="TValue">The type of the values in the <paramref name="source"/>.</typeparam>
         /// <param name="source">The source <see cref="IEnumerable{T}"/>.</param>
         /// <param name="comparer">The comparer used to compare keys in the dictionary.</param>
@@ -78,6 +79,20 @@ namespace TehPers.Core.Api.Extensions
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, IEqualityComparer<TKey> comparer)
         {
             return source.ToDictionary(kv => kv.Key, kv => kv.Value, comparer);
+        }
+
+        /// <summary>
+        /// Tries to get the value associated with a key in a dictionary, then returns a pair of values depending on the result.
+        /// </summary>
+        /// <param name="source">The dictionary to get the item from.</param>
+        /// <param name="key">The key to lookup in the dictionary.</param>
+        /// <typeparam name="TKey">The type of the keys in the <paramref name="source"/>.</typeparam>
+        /// <typeparam name="TValue">The type of the values in the <paramref name="source"/>.</typeparam>
+        /// <returns>If the key was found, then <c>(<see langword="true"/>, value)</c>. Otherwise, <c>(<see langword="false"/>, ?)</c>.</returns>
+        public static (bool Found, TValue Value) TryGetValue<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> source, TKey key)
+        {
+            _ = source ?? throw new ArgumentNullException(nameof(source));
+            return source.TryGetValue(key, out var value) ? (true, value) : (false, value);
         }
 
         /// <summary>Swaps two elements in a list.</summary>
