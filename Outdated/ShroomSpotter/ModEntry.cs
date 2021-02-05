@@ -122,45 +122,11 @@ namespace ShroomSpotter
             var shroomLevels = new List<int>();
             for (var mineLevel = 1; mineLevel < 120; mineLevel++)
             {
-                //var skipMushroomCheck = false;
-                if (mineLevel % 5 == 0)
-                    // skip elevator floors for everything
-                    continue;
-                /*
-                // Monster infestation seems to override mushroom spawns so that is checked first
-                var random = new Random((int) Game1.stats.DaysPlayed + relativeDay + mineLevel * 100 +
-                                        (int) Game1.uniqueIDForThisGame / 2);
-                if (random.NextDouble() < 0.044 && mineLevel % 5 != 0 && mineLevel % 40 > 5 && mineLevel % 40 < 30 &&
-                    mineLevel % 40 != 19)
-                {
-                    if (random.NextDouble() < 0.5)
-                    {
-                    }
-
-                    skipMushroomCheck = true;
-                }
-                else if (random.NextDouble() < 0.044 &&
-                         Utility.doesMasterPlayerHaveMailReceivedButNotMailForTomorrow("ccCraftsRoom") &&
-                         Game1.MasterPlayer.hasOrWillReceiveMail("VisitedQuarryMine") && mineLevel % 40 > 1 &&
-                         mineLevel % 5 != 0)
-                {
-                    if (random.NextDouble() < 0.25)
-                    {
-                    }
-
-                    skipMushroomCheck = true;
-                }
-
-                if (skipMushroomCheck) continue;
-                */
-
-                // Reset the seed for checking Mushrooms. Note, there are a couple checks related to
-                // darker than normal lighting. We don't care about the results but need to mimic them.
                 var random = new Random(((int) Game1.stats.DaysPlayed + relativeDay) * mineLevel + 4 * mineLevel +
                                         (int) Game1.uniqueIDForThisGame / 2);
                 if (random.NextDouble() < 0.3 && mineLevel > 2) random.NextDouble(); // checked vs < 0.3 again
                 random.NextDouble(); // checked vs < 0.15
-                if (random.NextDouble() < 0.035 && mineLevel > 80) shroomLevels.Add(mineLevel);
+                if (random.NextDouble() < 0.035 && mineLevel > 80 && mineLevel % 5 != 0) shroomLevels.Add(mineLevel);
             }
 
             return shroomLevels;
