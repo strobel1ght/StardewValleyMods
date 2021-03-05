@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Menus;
 
 namespace ShroomSpotter
@@ -31,7 +33,7 @@ namespace ShroomSpotter
             // Find all shroom levels
             var shroomLevels = new List<int>();
             var daysTilShroom = -1;
-            while (shroomLevels.Count == 0 && ++daysTilShroom < 50) shroomLevels = GetShroomLayers(daysTilShroom);
+            while (shroomLevels.Count == 0 && ++daysTilShroom < 50) shroomLevels = GetShroomLayers();
             if (shroomLevels.Count > 0)
             {
                 if (daysTilShroom == 0)
@@ -73,7 +75,7 @@ namespace ShroomSpotter
                 if (!component.bounds.Contains(mouseX, mouseY)) continue;
 
                 // Add any mushroom text
-                var shrooms = GetShroomLayers(day - Game1.dayOfMonth);
+                var shrooms = GetShroomLayers();
                 if (hoverText.Length > 0) hoverText += "\n";
                 if (shrooms.Count > 0) hoverText += "Shrooms: " + string.Join(", ", shrooms);
                 else hoverText += "No shrooms";
@@ -99,7 +101,7 @@ namespace ShroomSpotter
             for (var day = 1; day <= 28; day++)
             {
                 var component = calendarDays[day - 1];
-                var shrooms = GetShroomLayers(day - Game1.dayOfMonth);
+                var shrooms = GetShroomLayers();
 
                 // Check if a shroom layer exists on this day
                 if (shrooms.Count <= 0) continue;
@@ -117,16 +119,12 @@ namespace ShroomSpotter
 
         #endregion
 
-        private static List<int> GetShroomLayers(int relativeDay)
+        private static List<int> GetShroomLayers()
         {
             var shroomLevels = new List<int>();
             for (var mineLevel = 1; mineLevel < 120; mineLevel++)
             {
-                var random = new Random(((int) Game1.stats.DaysPlayed + relativeDay) * mineLevel + 4 * mineLevel +
-                                        (int) Game1.uniqueIDForThisGame / 2);
-                if (random.NextDouble() < 0.3 && mineLevel > 2) random.NextDouble(); // checked vs < 0.3 again
-                random.NextDouble(); // checked vs < 0.15
-                if (random.NextDouble() < 0.035 && mineLevel > 80 && mineLevel % 5 != 0) shroomLevels.Add(mineLevel);
+                shroomLevels = MineShaft.mushroomLevelsGeneratedToday.ToList();
             }
 
             return shroomLevels;
