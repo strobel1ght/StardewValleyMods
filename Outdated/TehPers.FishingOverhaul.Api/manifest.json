@@ -1,0 +1,16 @@
+{
+  "Name": "Teh's Core Mod Api",
+  "Author": "TehPers",
+  "Version": "0.4.0",
+  "Description": "A collection of helpers and frameworks for creating mods.",
+  "UniqueID": "TehPers. FishingOverhaulAPI",
+  "EntryDll": "FishingOverhaulAPI.dll",
+  "MinimumApiVersion": "3.3.0",
+  "UpdateKeys": [ "Nexus:3256" ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.JsonAssets",
+      "IsRequired": false
+    }
+  ]
+}

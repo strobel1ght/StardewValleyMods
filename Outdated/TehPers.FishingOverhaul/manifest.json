@@ -4,8 +4,8 @@
   "Version": "2.1.5-20190814.tehpers",
   "Description": "A complete overhaul of vanilla fishing, with a huge amount of customization.",
   "UniqueID": "TehPers.FishingOverhaul",
-  "EntryDll": "TehPers.FishingOverhaul.dll",
-  "MinimumApiVersion": "2.10",
+  "EntryDll": "FishingOverhaul.dll",
+  "MinimumApiVersion": "3.3.0",
   "UpdateKeys": [ "Nexus:866" ],
   "Dependencies": [
     {
