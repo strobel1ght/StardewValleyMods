@@ -6,5 +6,5 @@
   "UniqueID": "ShroomSpotter",
   "EntryDll": "ShroomSpotter.dll",
   "MinimumApiVersion": "3.2.2",
-  "UpdateKeys": [ "7934" ]
+  "UpdateKeys": [ "Nexus:7934" ]
 }
