@@ -21,8 +21,6 @@ namespace ShroomSpotter
             Helper.Events.Display.RenderedActiveMenu += RenderedActiveMenu;
         }
 
-        #region Events
-
         private void ButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             // Check the pressed button
@@ -54,7 +52,8 @@ namespace ShroomSpotter
 
             // Try to get the calendar field
             if (!(Helper.Reflection.GetField<List<ClickableTextureComponent>>(menu, nameof(Billboard.calendarDays))
-                ?.GetValue() is List<ClickableTextureComponent> calendarDays)) return;
+                ?.GetValue() is List<ClickableTextureComponent> calendarDays))
+                return;
 
             // Get the current hover text
             var hoverField = Helper.Reflection.GetField<string>(menu, "hoverText");
@@ -75,8 +74,10 @@ namespace ShroomSpotter
                 // Add any mushroom text
                 var shrooms = GetShroomLayers(day - Game1.dayOfMonth);
                 if (hoverText.Length > 0) hoverText += "\n";
-                if (shrooms.Count > 0) hoverText += "Shrooms: " + string.Join(", ", shrooms);
-                else hoverText += "No shrooms";
+                if (shrooms.Count > 0)
+                    hoverText += "Shrooms: " + string.Join(", ", shrooms);
+                else
+                    hoverText += "No shrooms";
                 break;
             }
 
@@ -90,7 +91,8 @@ namespace ShroomSpotter
 
             // Try to get the calendar field
             if (!(Helper.Reflection.GetField<List<ClickableTextureComponent>>(menu, nameof(Billboard.calendarDays))
-                ?.GetValue() is List<ClickableTextureComponent> calendarDays)) return;
+                ?.GetValue() is List<ClickableTextureComponent> calendarDays))
+                return;
 
             // Get the current hover text
             var hoverText = Helper.Reflection.GetField<string>(menu, "hoverText").GetValue();
@@ -114,9 +116,7 @@ namespace ShroomSpotter
             // Redraw the hover text so it appears over the mushrooms
             IClickableMenu.drawHoverText(e.SpriteBatch, hoverText, Game1.dialogueFont);
         }
-
-        #endregion
-
+        
         private static List<int> GetShroomLayers(int relativeDay)
         {
             var shroomLevels = new List<int>();

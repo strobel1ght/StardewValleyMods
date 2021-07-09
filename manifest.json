@@ -5,6 +5,5 @@
   "Description": "Tells you which floor the shrooms will be on today.",
   "UniqueID": "ShroomSpotter",
   "EntryDll": "ShroomSpotter.dll",
-  "MinimumApiVersion": "3.2.2",
   "UpdateKeys": [ "Nexus:7934" ]
 }
